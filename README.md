@@ -1,137 +1,171 @@
-# medipack
-Medical Store Management System
+# MedicineBazar
 
-A full-stack web and Android application for managing end-to-end medical store operations, including inventory management, purchasing, sales, billing, and user management. The system supports the complete medicine lifecycle from procurement to sale with expiry tracking, stock accuracy, and real-time data synchronization.
+A full-stack medical store management system built with **Go** and **Kotlin**, designed to handle end-to-end pharmacy operations — from inventory and procurement to sales, billing, and mobile POS usage.
 
-Features
+---
 
-Medicine and batch-wise inventory management
+## Overview
 
-Supplier and purchase tracking
+MedicineBazar has two distinct user-facing surfaces, both powered by a single Go backend:
 
-Sales and billing with invoice generation
+- **Web application** — server-rendered pages built with Go's `html/template` engine, covering both the customer-facing storefront and the admin dashboard. There is no separate frontend framework; Go handles routing, logic, and HTML rendering directly.
+- **Android app** — a native Kotlin app that communicates with the backend via REST API, with offline support through a local Room database.
 
-Automatic stock updates on purchase and sale
+```
+Android App ──────── REST API ──┐
+                                 ├── Go Backend ── Database
+Web Browser ── HTTP (Go templates)┘
+```
 
-Expiry date and low-stock alerts
+The Go backend is the single source of truth — it serves HTML to browsers and JSON to the Android app from the same server.
 
-Customer and user account management
+---
 
-Role-based access control (admin, staff, user)
+## Features
 
-Order history and basic reporting
+- Medicine and batch-wise inventory management
+- Supplier and purchase order tracking
+- Sales and billing with invoice generation
+- Automatic stock updates on purchase and sale
+- Expiry date tracking and low-stock alerts
+- Customer and user account management
+- Role-based access control (admin, staff, customer)
+- Order history and reporting
+- Android app for mobile and on-floor POS usage
+- Prescription upload support
 
-Android app support for mobile and POS usage
+---
 
-System Overview
+## Tech Stack
 
-The project follows a full-stack architecture with a centralized backend powering both the web application and the Android app.
+### Backend — Go
+- RESTful API (consumed by Android app)
+- Server-side HTML rendering via Go's `html/template` (consumed by web browser)
+- JWT-based authentication
+- Modular service and repository architecture
+- Payment gateway integrations (Razorpay, Paytm, COD)
+- SQLite (default) or PostgreSQL
 
-Android App ─┐
-             ├── Backend API ─── Database
-Web Frontend ┘
+### Web Frontend
+- Pure HTML, CSS, and vanilla JavaScript
+- All pages are rendered server-side by Go — there is no client-side framework
+- Optional lightweight enhancements via HTMX and Alpine.js
+- Admin dashboard and customer-facing storefront
 
-Web application for administration and customer access
+### Android App — Kotlin
+- MVVM architecture
+- Room database for offline support and local sync
+- Retrofit for REST API communication
+- Hilt for dependency injection
 
-Android application optimized for mobile and on-floor operations
+---
 
-Backend API as the single source of truth
+## Project Structure
 
-Tech Stack
-Backend
-
-Language: Go
-
-RESTful API architecture
-
-JWT-based authentication
-
-Modular service and repository layers
-
-Web Frontend
-
-HTML, CSS, JavaScript
-
-Server-rendered templates
-
-Admin dashboard and customer-facing pages
-
-Android App
-
-Kotlin
-
-MVVM architecture
-
-Offline support with local storage and sync
-
-Database
-
-Relational database (SQLite / PostgreSQL supported)
-
-Project Structure
-
-.
-├── backend/        # Backend server (Go)
-├── web/            # Website frontend
-├── android/        # Android application
-├── database/       # Database schemas
+```
+medicinebazar/
+├── backend/        # Go server — API + web template rendering
+├── web/            # HTML templates and static assets served by Go
+├── android/        # Native Kotlin Android application
+├── database/       # Database schemas and migrations
+├── config/         # Environment and application configuration
 ├── docs/           # Documentation
-├── scripts/        # Utility and deployment scripts
-├── releases/       # Pre-built release artifacts
-├── LICENSE
+├── scripts/        # Build, deploy, and maintenance scripts
+├── releases/       # Pre-built binaries and APKs for distribution
+├── Makefile        # Build everything with one command
 └── README.md
+```
 
-Getting Started
-Prerequisites
+---
 
-Go (for backend)
+## Getting Started
 
-Android Studio (for Android app)
+### Prerequisites
 
-Modern web browser
+- Go 1.21+
+- Android Studio (for Android app)
+- SQLite or PostgreSQL
+- Make (optional, for Makefile commands)
 
-SQLite / PostgreSQL
+### Backend
 
-Backend
-
+```bash
 cd backend
 go run main.go
+```
 
-Web
+The server will start and serve both the web frontend (HTML) and the REST API from the same port.
 
-Configure backend URL
+### Web
 
-Serve static files or use Go templates
+No separate setup needed. The Go backend serves all web pages automatically once the server is running. Point your browser to `http://localhost:<port>`.
 
-Android
+### Android
 
-Open android/ in Android Studio
+1. Open the `android/` directory in Android Studio
+2. Set the API base URL in the config to point to your running backend
+3. Build and run on a device or emulator
 
-Configure API base URL
+### Using Make
 
-Build and run on device or emulator
+```bash
+make build-all     # Build backend binary + Android APK
+make run           # Run backend locally
+make migrate       # Run database migrations
+make seed          # Seed initial data
+```
 
-Detailed setup instructions are available in the docs/ directory.
+---
 
-Documentation
+## Scripts
 
-Comprehensive documentation is available under docs/, including:
+The `scripts/` directory contains shell scripts for common operations:
 
-Installation and setup guides
+- `scripts/build/` — build backend, Android APK, or everything at once
+- `scripts/deploy/` — install, update, or remove a deployment; SSL setup
+- `scripts/database/` — migrations, seeding, backup, restore, reset
+- `scripts/maintenance/` — health checks, log cleanup, service restart
+- `scripts/dev/` — local dev setup and test data generation
 
-System architecture
+---
 
-API reference
+## Documentation
 
-Database schema
+Full documentation is in the `docs/` directory:
 
-User and admin manuals
+| Document | Description |
+|---|---|
+| `docs/setup/INSTALLATION.md` | Complete installation guide |
+| `docs/setup/SERVER_SETUP.md` | Server configuration |
+| `docs/setup/DOCKER_SETUP.md` | Docker deployment |
+| `docs/development/ARCHITECTURE.md` | System architecture |
+| `docs/development/API_REFERENCE.md` | REST API reference |
+| `docs/development/DATABASE_SCHEMA.md` | Database design |
+| `docs/user-guides/ADMIN_MANUAL.md` | Admin panel guide |
+| `docs/user-guides/MOBILE_APP_GUIDE.md` | Android app guide |
+| `docs/operations/TROUBLESHOOTING.md` | Common issues and fixes |
 
-License
+---
 
-This project is licensed under the MIT License.
-See the LICENSE file for details.
+## Releases
 
-Disclaimer
+Pre-built binaries and APKs are available in the `releases/` directory, versioned for each stable release:
+
+- `medshop-server-linux-amd64` — compiled Go server binary
+- `medshop-app-vX.X.X.apk` — Android APK
+- `web-static.tar.gz` — static web assets
+- `database-schema.sql` — database schema
+
+See `releases/latest/` for the most recent stable build.
+
+---
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+---
+
+## Disclaimer
 
 This project is intended for educational, demonstration, and small-scale deployment purposes. It is not a certified medical or pharmaceutical compliance system.
