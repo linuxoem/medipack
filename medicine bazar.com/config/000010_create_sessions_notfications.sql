@@ -1,0 +1,4 @@
+-- =============================================================
+-- Migration: 000010_create_sessions_notfications
+-- JWT refresh tokens + in-app notification log
+-- =============================================================
